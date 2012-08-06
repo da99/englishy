@@ -18,3 +18,11 @@ describe "Line", () ->
 
     it "is empty", () ->
       assert.equal new_line().is_empty(), true
+
+  describe "append(text)", () ->
+    it "appends text", () ->
+      line = new_line()
+      line.append "a"
+      line.append "b"
+      line.append "c"
+      assert.equal line.text(), "abc"

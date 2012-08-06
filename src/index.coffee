@@ -76,7 +76,7 @@ exports.Line = class Line
     @d.text = str
 
   append: (str) ->
-    @.text = "#{@text()}#{str}"
+    @d.text = "#{@text()}#{str}"
 
 exports.Block = class Block
   constructor: () ->
@@ -87,11 +87,14 @@ exports.Block = class Block
     @regex.new_lines_at_end   = /[\n]+$/
     @regex.whitespace         = /^\s+|\s+$/g
     
+  text: () ->
+    @d.text 
+
   is_empty: () ->
-    @text().length is 0
+    @text().englishy('is_empty')
 
   is_whitespace: () ->
-    @text().replace(@regex.whitespace, '') is ""
+    @text().englishy('is_whitespace')
     
   append: (str) ->
     @d.text = "#{@d.text}#{str}"
