@@ -1,5 +1,5 @@
 assert = require 'assert'
-ep     = require 'englishy_parser'
+ep     = require 'englishy'
 
 parse_it = (str) ->
   return (new ep.Englishy(str)).lines
@@ -16,7 +16,7 @@ describe 'Parsing sentences', () ->
           """
     
     lines  = parse_it(str)
-    target = [ 
+    target = [
       [ "This is a line.", null],
       [ "This is another line.", null],
     ]
@@ -31,7 +31,7 @@ describe 'Parsing sentences', () ->
           """
     
     lines = parse_it(str)
-    target= [ 
+    target= [
       [ "This is line one.", null],
       [ "This is a   continued line.", null]
     ]
@@ -57,27 +57,26 @@ describe 'Parsing sentences', () ->
 # end # === Walt sentences
 
 describe "Parsing blocks", () ->
-
-  it "parses blocks surrounded by empty lines of spaces with irregular indentation.", () ->
-    lines = parse_it("""
-                     This is A.
-                     This is B:
-                        
-                       Block
-                     
-                     """)
-    must_equal lines, [["This is A.", null], ["This is B:", "  Block\n\n"] ]
   
-  it "removes empty lines surrounding block", () ->
+  it "removes empty lines surrounding block w/ no spaces past block indentation", () ->
     lines = parse_it("""
       This is A.
       This is B:
-          
+      
         Block line 1.
         Block line 2.
-       
-    """)
-    must_equal lines, [["This is A.", null], ["This is B:", "  Block line 1.\n  Block line 2.\n \n"] ]
+      
+      """)
+    must_equal lines, [["This is A.", null], ["This is B:", "  Block line 1.\n  Block line 2."] ]
+
+  it "parses blocks surrounded by empty lines of spaces w/ irregular indentation.", () ->
+    lines = parse_it("""
+                     This is A.
+                     This is B:
+                          
+                       Block
+                         """)
+    must_equal lines, [["This is A.", null], ["This is B:", "   \n  Block\n  "] ]
   
   it "does not remove last colon if line has no block.", () ->
     lines = parse_it("""

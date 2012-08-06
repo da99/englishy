@@ -1,5 +1,5 @@
 
-Englishy_Parser
+Englishy
 ================
 
 A npm module providing simple line and blockquote parsing (w/o paragraphs):
@@ -25,12 +25,12 @@ A npm module providing simple line and blockquote parsing (w/o paragraphs):
 Installation
 ------------
 
-    npm install englishy_parser
+    npm install englishy
 
 Usage
 ------
 
-    var ep = require("englishy_parser");
+    var ep = require("englishy");
     var parsed = new ep.Englishy(str);
     parsed.lines; 
     // => [ ... ]
@@ -39,7 +39,7 @@ Usage
 Run Tests
 ---------
 
-    git clone git@github.com:da99/englishy_parser.git
+    git clone git@github.com:da99/englishy.git
     cd englishy_parser
     
     sudo npm link
