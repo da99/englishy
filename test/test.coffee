@@ -67,16 +67,11 @@ describe "Parsing blocks", () ->
         Block line 2.
       
       """)
-    must_equal lines, [["This is A.", null], ["This is B:", "  Block line 1.\n  Block line 2."] ]
+    must_equal lines, [["This is A."], ["This is B:", "  Block line 1.\n  Block line 2."] ]
 
   it "parses blocks surrounded by empty lines of spaces w/ irregular indentation.", () ->
-    lines = parse_it("""
-                     This is A.
-                     This is B:
-                          
-                       Block
-                         """)
-    must_equal lines, [["This is A.", null], ["This is B:", "   \n  Block\n  "] ]
+    lines = parse_it("  This is A.\n  This is B:\n    \n    Block\n    \n")
+    must_equal lines, [["This is A."], ["This is B:", "  \n  Block\n  "] ]
   
   it "does not remove last colon if line has no block.", () ->
     lines = parse_it("""
@@ -85,9 +80,9 @@ describe "Parsing blocks", () ->
       This is B.
     """)
     must_equal lines, [
-      ["This is A.", null],
+      ["This is A."],
       ["This is :memory:", ''],
-      ["This is B.", null]
+      ["This is B."]
     ]
 
 # end # === Walt blocks

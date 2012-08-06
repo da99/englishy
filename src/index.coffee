@@ -185,17 +185,14 @@ exports.Englishy = class Englishy
     line.englishy('strip').englishy('has_end_colon')
 
   full_sentence: (line) ->
-    line.englishy('strip').englishy('has_end_colon')
+    line.englishy('strip').englishy('has_end_period')
     
   _process_line: (line) ->
     # Skip empty lines.
     return null if line.englishy('is_empty') and !@in_block() and !@in_sentence()
-    
     l = line.englishy('strip')
     
-    begins_with_whitespace = line.englishy('begins_with_whitespace')
-    
-    if @in_block()
+    if @in_block() and (line.englishy('begins_with_whitespace') || line.englishy('is_empty'))
       b = @lines.last().block()
       return b.append_line( line  )
       
@@ -231,7 +228,7 @@ exports.Englishy = class Englishy
       line.finish_writing()
 
     if @lines.last && @in_sentence()
-      @unknown_fragment @lines.last()
+      @unknown_fragment "'#{@lines.last().text()}'"
     @lines
 
 
