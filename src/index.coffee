@@ -7,10 +7,12 @@ if !Array.prototype.last
           1
     return this[@.length - n]
     
-exports.Stringy = class Stringy: 
+exports.Stringy = class Stringy
   constructor: (parent) ->
-    @parent = parent
-    @str    = @parent
+    @str = parent
+    @HEAD_WHITE_SPACE = /^[\s]+/
+    @END_PERIOD = /\.$/
+    @END_COLON  = /\:$/
     
   strip: () ->
     @str.replace(/^\s+|\s+$/g, '')
@@ -19,11 +21,18 @@ exports.Stringy = class Stringy:
     @str.length is 0
 
   is_whitespace: () ->
-    return( @str.englishy('strip').length is 0 )
+    return( @strip().length is 0 )
   
-  remove_indentation: (str) ->
-    return "" if @strip(str) is ""
-    lines = @strip_beginning_empty_lines(str).split("\n")
+  strip_beginning_empty_lines: (lines) ->
+    arr = []
+    for line in lines 
+      if (line.englishy('strip') != "" )
+        arr.push line
+    arr
+  
+  remove_indentation: () ->
+    return "" if @strip() is ""
+    lines = @strip_beginning_empty_lines( @str.split("\n") )
     indent_meta= @HEAD_WHITE_SPACE.exec(lines[0])
     if !indent_meta
       return lines.join("\n")
@@ -31,9 +40,8 @@ exports.Stringy = class Stringy:
     final = (l.replace(indent, "") for l in lines)
     final.join("\n")
   
-String::englishy (meth, args...) ->
-  @englishy ?= Stringy.new(this)
-  @englishy[meth](args...)
+String.prototype.englishy = (meth, args...) ->
+  ( this.englishy_obj ?= new Stringy(this) )[meth](args...)
   
 exports.Line = class Line
   constructor: () ->
@@ -163,12 +171,6 @@ exports.Englishy = class Englishy
   full_sentence: (line) ->
     @END_PERIOD.test @strip(line)
     
-  strip_beginning_empty_lines: (str) ->
-    return "" if @strip(str) is ""
-    lines = str.split("\n")
-    lines.shift() while lines[0] and ( @strip(lines[0]) is "" )
-    lines.join("\n")
-
   _process_line: (line) ->
     # Skip empty lines.
     return null if @is_empty(line) and !@in_block() and !@in_sentence()
@@ -227,4 +229,7 @@ exports.Englishy = class Englishy
 
 
 
-
+# exports.Stringy = Stringy
+# exports.Line = Line
+# exports.Block = Block
+# exports.Englishy = Englishy
