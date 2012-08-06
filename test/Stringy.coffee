@@ -29,3 +29,9 @@ describe "Stringy", () ->
     it "returns same string if first line has no indentation", () ->
       str = "a\n  b\n  c"
       assert.equal str.englishy('remove_indentation'), str
+    it "does not remove lines with only whitespace", () ->
+      str = "  a\n    \n  b"
+      assert.equal str.englishy('remove_indentation'), "a\n  \nb"
+    it "does not remove empty lines after de-indentation", () ->
+      str = "  a\n  \n  b"
+      assert.equal str.englishy('remove_indentation'), "a\n\nb"

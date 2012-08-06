@@ -42,7 +42,7 @@ exports.Stringy = class Stringy
   
   remove_indentation: () ->
     return "" if @strip() is ""
-    lines = @strip_beginning_empty_lines( @str.split("\n") )
+    lines = ( @str.split("\n") )
     indent_meta= @HEAD_WHITE_SPACE.exec(lines[0])
     if !indent_meta
       return lines.join("\n")
@@ -77,7 +77,7 @@ exports.Line = class Line
 
   create_block: () ->
     return false if @has_block()
-    @d.block = new Englishy.Block()
+    @d.block = new Block()
 
   update_number: (n) ->
     @d.number = n
@@ -138,6 +138,7 @@ exports.Englishy = class Englishy
   record_error: (msg) ->
     err = new Error(msg)
     err.msg = msg
+    throw err
       
     @lines = err
     @error = @lines
@@ -196,17 +197,8 @@ exports.Englishy = class Englishy
     
     if @in_block()
       b = @lines.last().block()
+      return b.append_line( line  )
       
-      if line.englishy('is_empty') and b.is_empty()
-        return line
-
-      if b.is_empty() and line.englishy('is_empty') and l.englishy('is_empty')
-        b.append_line( line  )
-        return line
-
-      if begins_with_whitespace or l.englishy('is_empty')
-        b.append_line line
-        return line
     
     if !@in_sentence() and ( @start_of_block(l) or @full_sentence(l) )
       @push_new_line l
@@ -228,7 +220,7 @@ exports.Englishy = class Englishy
     @unknown_fragment line
 
   unknown_fragment: (l) ->
-    @record_error "Unknown fragment: #{l}"
+    throw @record_error "Unknown fragment: #{l}"
 
   parse: () ->
     
