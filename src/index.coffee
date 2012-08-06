@@ -14,6 +14,9 @@ exports.Stringy = class Stringy
     @END_PERIOD = /\.$/
     @END_COLON  = /\:$/
     
+  standardize: () ->
+    @str.replace(/\t/, "  ").replace(/\r/, "")
+    
   strip: () ->
     @str.replace(/^\s+|\s+$/g, '')
     
@@ -23,6 +26,13 @@ exports.Stringy = class Stringy
   is_whitespace: () ->
     return( @strip().length is 0 )
   
+  begins_with_whitespace: () ->
+    @HEAD_WHITE_SPACE.test @str
+  has_end_period: () ->
+    @END_PERIOD.test @str
+  has_end_colon: () ->
+    @END_COLON.test @str
+
   strip_beginning_empty_lines: (lines) ->
     arr = []
     for line in lines 
@@ -78,6 +88,10 @@ exports.Line = class Line
   append: (str) ->
     @d.text = "#{@text()}#{str}"
 
+  finish_writing: () ->
+    b = @block() 
+    b and b.finish_writing()
+
 exports.Block = class Block
   constructor: () ->
     @d = {}
@@ -114,11 +128,9 @@ exports.Block = class Block
 exports.Englishy = class Englishy
       
   constructor: (str) ->
-    @HEAD_WHITE_SPACE = /^\s/
-    @END_PERIOD = /\.$/
-    @END_COLON  = /\:$/
-    
-    @string = str.replace(/\t/, "  ").replace(/\r/, "")
+    @d = {}
+    @d.starting_text = str
+    @d.working_text  = str.englishy('standardize')
     @lines = []
     @error = null
     @parse()
@@ -133,66 +145,67 @@ exports.Englishy = class Englishy
   last_error: () ->
     @error
 
-  last_line: () ->
-    last = @lines.last()
-    last and last.text
-
-  last_block: () ->
-    last = @lines.last()
-    last and last.block().text
-
   append_to_line: (str) ->
     @lines.last().append str
 
   append_to_block: (l) ->
-    @last_block().append_line l
+    @lines.last().block().append_line l
 
   push_new_line: (l) ->
-    new_line = new @Line()
+    new_line = new Line()
     new_line.append l
     if @start_of_block(l)
       new_line.create_block()
     @lines.push new_line
   
 
-  array: () ->
-    @lines
+  to_array: () ->
+    to_array = (line) ->
+      if line.has_block()
+        [line.text(), line.block().text() ]
+      else
+        [line.text()]
+    (to_array(l) for l in @lines)
+
+  is_empty: () ->
+    @lines.length is 0
 
   in_sentence: () ->
-    return false if !@last_line()
+    return false if !@lines.last()
     return false if @in_block()
-    l = @strip @last_line()
-    !( @END_PERIOD.test(l) )
+    l = @lines.last().text().englishy('strip')
+    !( l.englishy('has_end_period') )
   
   in_block: () ->
     return false if @is_empty()
-    @last_line().has_block()
+    @lines.last().has_block()
 
   start_of_block: (line) ->
-    @END_COLON.test @strip(line)
+    line.englishy('strip').englishy('has_end_colon')
 
   full_sentence: (line) ->
-    @END_PERIOD.test @strip(line)
+    line.englishy('strip').englishy('has_end_colon')
     
   _process_line: (line) ->
     # Skip empty lines.
-    return null if @is_empty(line) and !@in_block() and !@in_sentence()
+    return null if line.englishy('is_empty') and !@in_block() and !@in_sentence()
     
-    l = @strip(line)
+    l = line.englishy('strip')
     
-    begins_with_whitespace = @HEAD_WHITE_SPACE.test(line)
+    begins_with_whitespace = line.englishy('begins_with_whitespace')
     
     if @in_block()
-
-      if line.length is 0 and @last_block() is ''
+      b = @lines.last().block()
+      
+      if line.englishy('is_empty') and b.is_empty()
         return line
 
-      if @is_block_empty() and line.length > 0 and @is_empty(l)
-        @append_to_block( line + "\n" )
+      if b.is_empty() and line.englishy('is_empty') and l.englishy('is_empty')
+        b.append_line( line  )
         return line
 
-      if (begins_with_whitespace or @is_empty(l))
-        @append_to_block( line + "\n" )
+      if begins_with_whitespace or l.englishy('is_empty')
+        b.append_line line
         return line
     
     if !@in_sentence() and ( @start_of_block(l) or @full_sentence(l) )
@@ -204,7 +217,7 @@ exports.Englishy = class Englishy
 
       # Error check: Start of block not allowed after incomplete sentence.
       if @start_of_block(l)
-        return @record_error("Incomplete sentence before block: #{@last_line()}")
+        return @record_error("Incomplete sentence before block: #{@lines.last()}")
 
       return @append_to_line(line)
 
@@ -219,14 +232,14 @@ exports.Englishy = class Englishy
 
   parse: () ->
     
-    raw_lines = @remove_indentation(@string).split("\n")
+    raw_lines = @d.working_text.englishy('remove_indentation').split("\n")
     @_process_line(raw_lines.shift()) while (@error is null) and raw_lines.length > 0
     # Final touches.
     for line in @lines
-      line.cleanup()
+      line.finish_writing()
 
     if @lines.last && @in_sentence()
-      @unknown_fragment @last_line()
+      @unknown_fragment @lines.last()
     @lines
 
 

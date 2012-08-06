@@ -40,10 +40,10 @@ Run Tests
 ---------
 
     git clone git@github.com:da99/englishy.git
-    cd englishy_parser
+    cd englishy
     
     sudo npm link
-    npm link englishy_parser
+    npm link englishy
     npm install
 
     sudo npm install -g mocha

@@ -2,7 +2,7 @@ assert = require 'assert'
 ep     = require 'englishy'
 
 parse_it = (str) ->
-  return (new ep.Englishy(str)).lines
+  return (new ep.Englishy(str)).to_array()
 
 must_equal = (actual, expected) ->
   assert.deepEqual actual, expected
@@ -17,8 +17,8 @@ describe 'Parsing sentences', () ->
     
     lines  = parse_it(str)
     target = [
-      [ "This is a line.", null],
-      [ "This is another line.", null],
+      [ "This is a line."],
+      [ "This is another line."],
     ]
     must_equal lines, target
     
@@ -32,8 +32,8 @@ describe 'Parsing sentences', () ->
     
     lines = parse_it(str)
     target= [
-      [ "This is line one.", null],
-      [ "This is a   continued line.", null]
+      [ "This is line one." ],
+      [ "This is a  continued line." ]
     ]
     must_equal lines, target
 
@@ -48,9 +48,9 @@ describe 'Parsing sentences', () ->
           """
     lines = parse_it(str)
     target = [
-      [ "This is a line.", null],
-      [ "This is line 2.", null],
-      [ "This is line 3.", null],
+      [ "This is a line." ],
+      [ "This is line 2." ],
+      [ "This is line 3." ],
     ]
     must_equal lines, target
 
