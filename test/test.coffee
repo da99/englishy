@@ -4,6 +4,14 @@ ep     = require 'englishy'
 parse_it = (str) ->
   return (new ep.Englishy(str)).to_array()
 
+record_err = (f) ->
+  err = null
+  try
+    f()
+  catch e
+    err = e
+  err
+
 must_equal = (actual, expected) ->
   assert.deepEqual actual, expected
 
@@ -90,20 +98,22 @@ describe "Parsing blocks", () ->
 describe "Returning errors", () ->
   
   it "if incomplete sentence is found", () ->
-    err = parse_it("""
-      This is one line.
-      This is an incomp sent
-    """)
-    assert.ok     /incomp sent/.test(err.message)
+    err = record_err () ->
+      parse_it("""
+        This is one line.
+        This is an incomp sent
+      """)
+    assert.ok /incomp sent/.test(err.message)
 
   it "if incomplete sentence is found before start of a block", () ->
-    err = parse_it("""
-      This is one line.
-      This is an incomp sent
-      This is a block:
-        Block
-    """)
-    assert.ok     /incomp sent$/.test(err.message)
+    err = record_err () ->
+      parse_it("""
+        This is one line.
+        This is an incomp sent
+        This is a block:
+          Block
+      """)
+    assert.ok /This is an incomp sent$/.test(err.message)
   
 # end # === Walt parsing errors
 

@@ -189,6 +189,7 @@ exports.Englishy = class Englishy
     
   _process_line: (line) ->
     # Skip empty lines.
+    return null if line.englishy('is_whitespace') and !@in_block() and !@in_sentence()
     return null if line.englishy('is_empty') and !@in_block() and !@in_sentence()
     l = line.englishy('strip')
     
@@ -206,7 +207,7 @@ exports.Englishy = class Englishy
 
       # Error check: Start of block not allowed after incomplete sentence.
       if @start_of_block(l)
-        return @record_error("Incomplete sentence before block: #{@lines.last()}")
+        return @record_error("Incomplete sentence before block: #{@lines.last().text()}")
 
       return @append_to_line(line)
 
