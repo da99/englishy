@@ -35,3 +35,19 @@ describe "Stringy", () ->
     it "does not remove empty lines after de-indentation", () ->
       str = "  a\n  \n  b"
       assert.equal str.englishy('remove_indentation'), "a\n\nb"
+
+  describe '.remove_end( char )', () ->
+    
+    it 'removes ending period: .', () ->
+      str = "i love ice cream"
+      assert.equal "#{str}.".englishy('remove_end', '.'), str
+      
+    it 'removes ending colon: :', () ->
+      str = "i love cheesecake"
+      assert.equal "#{str}:".englishy('remove_end', ':'), str
+      
+    it 'removes random char: ^', () ->
+      str = "^i love Heaven"
+      assert.equal "#{str}^".englishy('remove_end', '^'), str
+      
+      

@@ -32,10 +32,19 @@ exports.Stringy = class Stringy
     @END_PERIOD.test @str
   has_end_colon: () ->
     @END_COLON.test @str
+    
+  remove_end: (type) ->
+    switch type
+      when ".", "period"
+        @str.replace @END_PERIOD, ""
+      when ":", "colon"
+        @str.replace @END_COLON, ""
+      else
+        @str.replace (new RegExp("\\#{type}$")), ""
 
   strip_beginning_empty_lines: (lines) ->
     arr = []
-    for line in lines 
+    for line in lines
       if (line.englishy('strip') != "" )
         arr.push line
     arr
