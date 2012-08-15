@@ -5,6 +5,8 @@ Englishy: Intro and Usage
 A npm module providing simple line and blockquote parsing (w/o paragraphs):
 
     shell> npm install englishy
+
+    englishy = require("englishy")
     
     my_str = """
     
@@ -17,9 +19,8 @@ A npm module providing simple line and blockquote parsing (w/o paragraphs):
         I am also part of a block.
 
     """
-
-    ep = require("englishy")
-    parsed = new ep.Englishy(str)
+    
+    parsed = englishy(str)
     parsed.to_array()
     # ==>
       [ 

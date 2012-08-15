@@ -2,11 +2,12 @@
   "name": "englishy",
   "version": "0.3.0",
   "description": "A naive approach to parsing Englishy text.",
-  "main": "lib/index.js",
+  "main": "lib/englishy.js",
   "scripts": {
     "test": "mocha"
   },
   "dependencies": {
+    "string_da99": ">0.1.1"
   },
   "devDependencies": {
   },
