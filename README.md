@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/da99/englishy.png)](http://travis-ci.org/da99/englishy)
 
 Englishy: Intro and Usage
 ================
