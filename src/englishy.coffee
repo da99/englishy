@@ -121,7 +121,7 @@ exports.Englishy = class Englishy
 
   @Quotation_Mark_Split: /("[^"]+")/g
   
-  @pair_to_syms: ( pair ) ->
+  @pair_to_tokens: ( pair, var_regexp ) ->
     line  = pair[0].replace( /[.:]$/ , "" )
     block = pair[1]
     line_arr = line.split @Quotation_Mark_Split
@@ -131,24 +131,31 @@ exports.Englishy = class Englishy
       line_arr[i] = if _.first(piece) is '"' and _.last(piece) is '"'
         piece
       else
-        piece.whitespace_split()
+        if var_regexp
+          arr = []
+          for v in piece.split(var_regexp)
+            if v.strip && var_regexp.test(v)
+              arr.push v
+            else
+              arr.push v.whitespace_split()
+        else
+          arr = piece.whitespace_split()
 
-    line_arr = _.flatten(line_arr)
+        arr
 
-    if _.first(line_arr) is ""
-      line_arr.shift()
-    if _.last(line_arr) is ""
-      line_arr.pop()
+    line_arr_w_empty_strings = _.flatten(line_arr)
+
+    line_arr = ( v for v in line_arr_w_empty_strings when v isnt "")
 
     if block
       [ line_arr, block]
     else
       [ line_arr ]
 
-  to_tokens: () ->
+  to_tokens: ( var_regexp ) ->
     arr  = @to_array()
-    syms = ( @constructor.pair_to_syms(pair) for pair in arr )
-    syms
+    tokens = ( @constructor.pair_to_tokens(pair, var_regexp) for pair in arr )
+    tokens
 
   @line_to_array = (line) ->
       if line.has_block()

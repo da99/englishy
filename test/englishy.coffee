@@ -4,8 +4,8 @@ ep     = require 'englishy'
 parse_it = (str) ->
   return (new ep.Englishy(str)).to_array()
 
-to_syms  = (str) ->
-  return (new ep.Englishy(str)).to_tokens()
+to_tokens  = (str, args...) ->
+  return (new ep.Englishy(str)).to_tokens(args...)
 
 record_err = (f) ->
   err = null
@@ -26,7 +26,7 @@ describe 'Parsing to tokens', () ->
             This is another line.
           """
     
-    lines  = to_syms(str)
+    lines  = to_tokens(str)
     target = [
       [ "This is a line".whitespace_split()       ],
       [ "This is another line".whitespace_split() ],
@@ -39,7 +39,7 @@ describe 'Parsing to tokens', () ->
             This is another line.
           """
     
-    lines  = to_syms(str)
+    lines  = to_tokens(str)
     target = [
       [ ["This", "is", "a,", '"a group of words"', ',', '"another group"'] ],
       [ ["This", "is", "another", "line"]          ],
@@ -52,13 +52,39 @@ describe 'Parsing to tokens', () ->
             This is another line.
           """
     
-    lines  = to_syms(str)
+    lines  = to_tokens(str)
     target = [
       [ ['This', 'is', 'a,', '"a group"', 'of', '"words'] ],
       [ ["This", "is", "another", "line"] ],
     ]
     assert.deepEqual lines, target
 
+
+  it "separates variables if given a pattern: .to_tokens( /(!>[^<]+<)/ ) ", () ->
+    str = """
+            !>OP<: do this +!>Num<.
+            !>Do Op<: do this +!>Num 1<.
+          """
+    
+    lines  = to_tokens(str, /(!>[^>]+<)/ )
+    target = [
+      [ ['!>OP<', ':', 'do', 'this', '+', '!>Num<'] ],
+      [ ['!>Do Op<', ':', 'do', 'this', '+', '!>Num 1<'] ]
+    ]
+    assert.deepEqual lines, target
+
+  it "does not separate variables if they are in a quotation marked string", () ->
+    str = """
+            !>OP<: do this +!>Num< "!>String<".
+            !>Do Op<: do this +!>Num 1< "!>NU< is nice".
+          """
+    
+    lines  = to_tokens(str, /(!>[^>]+<)/ )
+    target = [
+      [ ['!>OP<', ':', 'do', 'this', '+', '!>Num<', '"!>String<"'] ],
+      [ ['!>Do Op<', ':', 'do', 'this', '+', '!>Num 1<', '"!>NU< is nice"'] ]
+    ]
+    assert.deepEqual lines, target
 
 describe 'Parsing sentences', () ->
   
