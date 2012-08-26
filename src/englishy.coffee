@@ -52,9 +52,9 @@ exports.Line = class Line
     b and b.finish_writing()
 
 exports.Block = class Block
-  constructor: () ->
+  constructor: (str) ->
     @d = {}
-    @d.text = ""
+    @d.text = str || ""
     @regex = {}
     @regex.new_lines_at_start = /^[\n]+/
     @regex.new_lines_at_end   = /[\n]+$/
@@ -69,6 +69,12 @@ exports.Block = class Block
   is_whitespace: () ->
     @text().is_whitespace()
     
+  text_line: (line_num) ->
+    target_i = line_num - 1
+    lines = (v for v in @text().strip().split("\n") when not v.is_whitespace() )
+    
+    lines[target_i] || throw new Error("No text line ##{line_num}.")
+
   append: (str) ->
     @d.text = "#{@d.text}#{str}"
     

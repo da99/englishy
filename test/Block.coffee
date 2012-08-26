@@ -2,8 +2,8 @@
 assert = require 'assert'
 ep     = require 'englishy'
 
-new_block = () ->
-  new ep.Block()
+new_block = (args...) ->
+  new ep.Block(args...)
 
 describe "Block", () ->
 
@@ -11,6 +11,22 @@ describe "Block", () ->
 
     it "sets text to an empty string", () ->
       assert.equal new_block().text(), ""
+      
+  describe "text_line(n)", () ->
+
+    it "grabs first line that has is non-empty", () ->
+      b = new_block(" \n \nText 1\n\nText 2 " )
+      assert.equal b.text_line(2), "Text 2"
+
+    it "raises error if lines does not exist.", () ->
+      b = new_block(" \n \nText 1\n\nText 2 " )
+      err = null
+      try 
+        console.log b.text_line(3)
+      catch e
+        err = e
+        
+      assert.equal err.message, "No text line #3."
       
   describe "append( text )", () ->
     it "appends text", () ->
