@@ -4,6 +4,9 @@ ep     = require 'englishy'
 parse_it = (str) ->
   return (new ep.Englishy(str)).to_array()
 
+to_syms  = (str) ->
+  return (new ep.Englishy(str)).to_symbols()
+
 record_err = (f) ->
   err = null
   try
@@ -14,6 +17,35 @@ record_err = (f) ->
 
 must_equal = (actual, expected) ->
   assert.deepEqual actual, expected
+
+describe 'Parsing to symbols', () ->
+
+  it 'multiple sentences', () ->
+    str = """
+            This is a line.
+            This is another line.
+          """
+    
+    lines  = to_syms(str)
+    target = [
+      [ "This is a line".whitespace_split()       ],
+      [ "This is another line".whitespace_split() ],
+    ]
+    must_equal lines, target
+
+  it 'does not split group of words surrounded by " marks', () ->
+    str = """
+            This is a, "a group of words", "another group".
+            This is another line.
+          """
+    
+    lines  = to_syms(str)
+    target = [
+      [ ["This", "is", "a,", '"a group of words"', ',', '"another group"'] ],
+      [ ["This", "is", "another", "line"]          ],
+    ]
+    assert.deepEqual lines, target
+
 
 describe 'Parsing sentences', () ->
   

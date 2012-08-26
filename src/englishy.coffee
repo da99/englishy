@@ -1,4 +1,5 @@
 
+_ = require "underscore"
 string_da99 = require "string_da99"
 
 if !Array.prototype.last
@@ -118,13 +119,45 @@ exports.Englishy = class Englishy
     @lines.push new_line
   
 
-  to_array: () ->
-    to_array = (line) ->
+  @Quotation_Mark_Split: /("[^"]+")/g
+  
+  @pair_to_syms: ( pair ) ->
+    line  = pair[0].replace( /[.:]$/ , "" )
+    block = pair[1]
+    line_arr = line.split @Quotation_Mark_Split
+    
+    for val, i in line_arr
+      piece = line_arr[i]
+      line_arr[i] = if _.first(piece) is '"' and _.last(piece) is '"'
+        piece
+      else
+        piece.whitespace_split()
+
+    line_arr = _.flatten(line_arr)
+
+    if _.first(line_arr) is ""
+      line_arr.shift()
+    if _.last(line_arr) is ""
+      line_arr.pop()
+
+    if block
+      [ line_arr, block]
+    else
+      [ line_arr ]
+
+  to_symbols: () ->
+    arr  = @to_array()
+    syms = ( @constructor.pair_to_syms(pair) for pair in arr )
+    syms
+
+  @line_to_array = (line) ->
       if line.has_block()
         [line.text(), line.block().text() ]
       else
         [line.text()]
-    (to_array(l) for l in @lines)
+        
+  to_array: () ->
+    (@constructor.line_to_array(l) for l in @lines)
 
   is_empty: () ->
     @lines.length is 0
