@@ -5,7 +5,7 @@ parse_it = (str) ->
   return (new ep.Englishy(str)).to_array()
 
 to_syms  = (str) ->
-  return (new ep.Englishy(str)).to_symbols()
+  return (new ep.Englishy(str)).to_tokens()
 
 record_err = (f) ->
   err = null
@@ -18,9 +18,9 @@ record_err = (f) ->
 must_equal = (actual, expected) ->
   assert.deepEqual actual, expected
 
-describe 'Parsing to symbols', () ->
+describe 'Parsing to tokens', () ->
 
-  it 'multiple sentences', () ->
+  it 'parses multiple sentences', () ->
     str = """
             This is a line.
             This is another line.
@@ -43,6 +43,19 @@ describe 'Parsing to symbols', () ->
     target = [
       [ ["This", "is", "a,", '"a group of words"', ',', '"another group"'] ],
       [ ["This", "is", "another", "line"]          ],
+    ]
+    assert.deepEqual lines, target
+
+  it 'splits words partially surrounded by " marks: hi " hello', () ->
+    str = """
+            This is a, "a group" of "words.
+            This is another line.
+          """
+    
+    lines  = to_syms(str)
+    target = [
+      [ ['This', 'is', 'a,', '"a group"', 'of', '"words'] ],
+      [ ["This", "is", "another", "line"] ],
     ]
     assert.deepEqual lines, target
 

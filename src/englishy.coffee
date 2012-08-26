@@ -145,7 +145,7 @@ exports.Englishy = class Englishy
     else
       [ line_arr ]
 
-  to_symbols: () ->
+  to_tokens: () ->
     arr  = @to_array()
     syms = ( @constructor.pair_to_syms(pair) for pair in arr )
     syms
