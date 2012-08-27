@@ -161,18 +161,22 @@ exports.Englishy = class Englishy
       [ line_arr ]
 
   to_tokens: ( var_regexp ) ->
-    arr  = @to_array()
-    tokens = ( @constructor.pair_to_tokens(pair, var_regexp) for pair in arr )
+    tokens  = []
+    for line in @lines
+      if line.has_block()
+        tokens.push @constructor.pair_to_tokens( [line.text(), line.block()] , var_regexp )
+      else
+        tokens.push @constructor.pair_to_tokens( [line.text()] , var_regexp )
     tokens
 
-  @line_to_array = (line) ->
-      if line.has_block()
-        [line.text(), line.block().text() ]
-      else
-        [line.text()]
-        
   to_array: () ->
-    (@constructor.line_to_array(l) for l in @lines)
+    arr = []
+    for line in @lines
+      if line.has_block()
+        arr.push [line.text(), line.block().text() ]
+      else
+        arr.push [line.text()]
+    arr
 
   is_empty: () ->
     @lines.length is 0
