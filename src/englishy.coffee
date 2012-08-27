@@ -153,8 +153,10 @@ exports.Englishy = class Englishy
 
     line_arr = ( v for v in line_arr_w_empty_strings when v isnt "")
 
-    if block
-      [ line_arr, block]
+    if block and !block.text
+      [ line_arr, new Block(block) ]
+    else if block and block.text
+      [ line_arr, block ]
     else
       [ line_arr ]
 

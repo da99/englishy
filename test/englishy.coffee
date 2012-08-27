@@ -86,6 +86,19 @@ describe 'Parsing to tokens', () ->
     ]
     assert.deepEqual lines, target
 
+  it "returns a Block as the second argument.", () ->
+     str = """
+       One is: 1.
+       This is a block:
+
+         Block 1.
+         Block 2.
+     """
+
+     tokens = to_tokens(str)
+     assert.equal tokens[1][1].text(), "  Block 1.\n  Block 2."
+
+
 describe 'Parsing sentences', () ->
   
   it 'multiple sentences', () ->
