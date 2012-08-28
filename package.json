@@ -1,6 +1,6 @@
 {
   "name": "englishy",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "A naive approach to parsing Englishy text.",
   "main": "lib/englishy.js",
   "scripts": {
