@@ -73,12 +73,16 @@ exports.Block = class Block
     target_i = line_num - 1
     lines = (v for v in @text().strip().split("\n") when not v.is_whitespace() )
     
-    lines[target_i] || throw new Error("No text line ##{line_num}.")
+    target = lines[target_i]
+    target || throw new Error("No text line ##{line_num}.")
 
   append: (str) ->
     @d.text = "#{@d.text}#{str}"
     
   append_line: (line) ->
+    two = "  "
+    if line.indexOf(two) is 0
+      line = line.replace(two, "") 
     if @is_empty()
       @d.text = line
     else

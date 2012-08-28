@@ -96,7 +96,7 @@ describe 'Parsing to tokens', () ->
      """
 
      tokens = to_tokens(str)
-     assert.equal tokens[1][1].text(), "  Block 1.\n  Block 2."
+     assert.equal tokens[1][1].text(), "Block 1.\nBlock 2."
 
 
 describe 'Parsing sentences', () ->
@@ -159,11 +159,11 @@ describe "Parsing blocks", () ->
         Block line 2.
       
       """)
-    must_equal lines, [["This is A."], ["This is B:", "  Block line 1.\n  Block line 2."] ]
+    must_equal lines, [["This is A."], ["This is B:", "Block line 1.\nBlock line 2."] ]
 
   it "parses blocks surrounded by empty lines of spaces w/ irregular indentation.", () ->
-    lines = parse_it("  This is A.\n  This is B:\n    \n    Block\n    \n")
-    must_equal lines, [["This is A."], ["This is B:", "  \n  Block\n  "] ]
+    lines = parse_it("  This is A.\n  This is B:\n    \n   Block\n    \n")
+    must_equal lines, [["This is A."], ["This is B:", " Block"] ]
   
   it "does not remove last colon if line has no block.", () ->
     lines = parse_it("""

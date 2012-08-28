@@ -28,9 +28,19 @@ describe "Block", () ->
         
       assert.equal err.message, "No text line #3."
       
-    it "does not remove indentation", () ->
-      b = new_block("  Text 1\n  Text 2\n    Text 3" )
-      assert.equal b.text_line(3), "    Text 3"
+    it "does not strip line.", () ->
+      str = """
+      This is a line w/block:
+        
+        Text 1.
+        
+        Text 2.
+        
+          Text 3.
+          
+      """
+      t = new ep.Englishy(str).to_tokens() 
+      assert.equal t[0][1].text_line(3), "  Text 3."
 
   describe "append( text )", () ->
     it "appends text", () ->
@@ -40,10 +50,17 @@ describe "Block", () ->
       assert.equal b.text(), "abc"
       
   describe "append_line( line )", () ->
+    
     it "appends line preceded by a new line", () ->
       b = new_block()
       b.append("a")
       b.append_line("b")
+      assert.equal b.text(), "a\nb"
+      
+    it "removes one level of indentation from line", () ->
+      b = new_block()
+      b.append_line("  a")
+      b.append_line("  b")
       assert.equal b.text(), "a\nb"
 
     it "does not append a new line if it is the first line", () ->
