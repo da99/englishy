@@ -15,19 +15,23 @@ describe "Block", () ->
   describe "text_line(n)", () ->
 
     it "grabs first line that has is non-empty", () ->
-      b = new_block(" \n \nText 1\n\nText 2 " )
+      b = new_block(" \n \nText 1\n\nText 2" )
       assert.equal b.text_line(2), "Text 2"
 
     it "raises error if lines does not exist.", () ->
       b = new_block(" \n \nText 1\n\nText 2 " )
       err = null
       try 
-        console.log b.text_line(3)
+        b.text_line(3)
       catch e
         err = e
         
       assert.equal err.message, "No text line #3."
       
+    it "does not remove indentation", () ->
+      b = new_block("  Text 1\n  Text 2\n    Text 3" )
+      assert.equal b.text_line(3), "    Text 3"
+
   describe "append( text )", () ->
     it "appends text", () ->
       b = new_block()
