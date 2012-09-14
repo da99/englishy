@@ -7,8 +7,8 @@
     "test": "mocha"
   },
   "dependencies": {
-    "string_da99": ">=0.2.1", 
-    "underscore": "*"
+    "string_da99": "0.2.x", 
+    "underscore": "1.x.x"
   },
   "devDependencies": {
   },

@@ -10,8 +10,17 @@ if !Array.prototype.last
           1
     return this[@.length - n]
     
-
+exports.Stringy = class Stringy
   
+  constructor: (str) ->
+    @target = str
+
+  is_stringy: () ->
+    true
+
+  value: () ->
+    @target
+
 exports.Line = class Line
   constructor: () ->
     @d = {}
@@ -139,7 +148,7 @@ exports.Englishy = class Englishy
     for val, i in line_arr
       piece = line_arr[i]
       line_arr[i] = if _.first(piece) is '"' and _.last(piece) is '"'
-        piece
+        new Stringy piece.substring( 1, piece.length - 1 )
       else
         if var_regexp
           arr = []

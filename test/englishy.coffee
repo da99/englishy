@@ -41,10 +41,20 @@ describe 'Parsing to tokens', () ->
     
     lines  = to_tokens(str)
     target = [
-      [ ["This", "is", "a,", '"a group of words"', ',', '"another group"'] ],
+      [ ["This", "is", "a,", { target: 'a group of words' }, ',', { target: 'another group' }] ],
       [ ["This", "is", "another", "line"]          ],
     ]
     assert.deepEqual lines, target
+
+  it 'sets .is_englishy_string on group of quoted words', () ->
+    str = """
+            This is a, "a group of words", "another group".
+            This is another line.
+          """
+    
+    lines  = to_tokens(str)
+    assert.deepEqual lines[0][0][3].is_stringy(), true
+
 
   it 'splits words partially surrounded by " marks: hi " hello', () ->
     str = """
@@ -54,7 +64,7 @@ describe 'Parsing to tokens', () ->
     
     lines  = to_tokens(str)
     target = [
-      [ ['This', 'is', 'a,', '"a group"', 'of', '"words'] ],
+      [ ['This', 'is', 'a,', { target: 'a group' }, 'of', '"words'] ],
       [ ["This", "is", "another", "line"] ],
     ]
     assert.deepEqual lines, target
@@ -81,8 +91,8 @@ describe 'Parsing to tokens', () ->
     
     lines  = to_tokens(str, /(!>[^>]+<)/ )
     target = [
-      [ ['!>OP<', ':', 'do', 'this', '+', '!>Num<', '"!>String<"'] ],
-      [ ['!>Do Op<', ':', 'do', 'this', '+', '!>Num 1<', '"!>NU< is nice"'] ]
+      [ ['!>OP<', ':', 'do', 'this', '+', '!>Num<', {target: '!>String<'} ] ],
+      [ ['!>Do Op<', ':', 'do', 'this', '+', '!>Num 1<', {target: '!>NU< is nice'}] ]
     ]
     assert.deepEqual lines, target
 
