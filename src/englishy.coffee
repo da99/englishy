@@ -25,11 +25,15 @@ if !Array.prototype.last
     
 exports.Stringy = class Stringy
   
-  constructor: (str) ->
+  constructor: (str, is_quoted) ->
     @target = str
+    @quoted = not not is_quoted
 
   is_stringy: () ->
     true
+
+  is_quoted: () ->
+    @quoted
 
   value: () ->
     @target
@@ -161,23 +165,22 @@ exports.Englishy = class Englishy
     for val, i in line_arr
       piece = line_arr[i]
       line_arr[i] = if _.first(piece) is '"' and _.last(piece) is '"'
-        new Stringy piece.substring( 1, piece.length - 1 )
+        new exports.Stringy piece.substring( 1, piece.length - 1 ), true
       else
         if var_regexp
           arr = []
           for v in piece.split(var_regexp)
             if v.strip && var_regexp.test(v)
-              arr.push v
+              arr.push new exports.Stringy v
             else
-              arr.push v.whitespace_split()
+              arr.push( (new exports.Stringy ws) for ws in v.whitespace_split() )
         else
-          arr = piece.whitespace_split()
+          arr = ( (new exports.Stringy ws ) for ws in piece.whitespace_split() )
 
         arr
 
     line_arr_w_empty_strings = _.flatten(line_arr)
-
-    line_arr = ( v for v in line_arr_w_empty_strings when v isnt "")
+    line_arr = ( v for v in line_arr_w_empty_strings when v.value() isnt "")
 
     if block and !block.text
       [ line_arr, new Block(block) ]

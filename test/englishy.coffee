@@ -1,11 +1,26 @@
 assert = require 'assert'
 ep     = require 'englishy'
 
+
+strings = (arr) ->
+  new_arr = []
+  for line_and_block in arr
+    line     = line_and_block[0]
+    block    = line_and_block[1]
+    new_line = ( v.value() for v in line_and_block[0] )
+    
+    if block
+      new_arr.push [ new_line, block  ]
+    else
+      new_arr.push [ new_line ]
+      
+  new_arr
+
 parse_it = (str) ->
   return (new ep.Englishy(str)).to_array()
 
 to_tokens  = (str, args...) ->
-  return (new ep.Englishy(str)).to_tokens(args...)
+  return strings (new ep.Englishy(str)).to_tokens(args...)
 
 record_err = (f) ->
   err = null
@@ -61,20 +76,10 @@ describe 'Parsing to tokens', () ->
     
     lines  = to_tokens(str)
     target = [
-      [ ["This", "is", "a,", { target: 'a group of words' }, ',', { target: 'another group' }] ],
+      [ ["This", "is", "a,", 'a group of words', ',', 'another group' ] ],
       [ ["This", "is", "another", "line"]          ],
     ]
     assert.deepEqual lines, target
-
-  it 'sets .is_englishy_string on group of quoted words', () ->
-    str = """
-            This is a, "a group of words", "another group".
-            This is another line.
-          """
-    
-    lines  = to_tokens(str)
-    assert.deepEqual lines[0][0][3].is_stringy(), true
-
 
   it 'splits words partially surrounded by " marks: hi " hello', () ->
     str = """
@@ -84,7 +89,7 @@ describe 'Parsing to tokens', () ->
     
     lines  = to_tokens(str)
     target = [
-      [ ['This', 'is', 'a,', { target: 'a group' }, 'of', '"words'] ],
+      [ ['This', 'is', 'a,', 'a group', 'of', '"words'] ],
       [ ["This", "is", "another", "line"] ],
     ]
     assert.deepEqual lines, target
@@ -111,8 +116,8 @@ describe 'Parsing to tokens', () ->
     
     lines  = to_tokens(str, /(!>[^>]+<)/ )
     target = [
-      [ ['!>OP<', ':', 'do', 'this', '+', '!>Num<', {target: '!>String<'} ] ],
-      [ ['!>Do Op<', ':', 'do', 'this', '+', '!>Num 1<', {target: '!>NU< is nice'}] ]
+      [ ['!>OP<', ':', 'do', 'this', '+', '!>Num<', '!>String<' ] ],
+      [ ['!>Do Op<', ':', 'do', 'this', '+', '!>Num 1<', '!>NU< is nice' ] ]
     ]
     assert.deepEqual lines, target
 
