@@ -2,6 +2,19 @@
 _ = require "underscore"
 string_da99 = require "string_da99"
 
+exports.stringy_compare = ( a, b ) ->
+  str_a = if a.value
+    a.value()
+  else
+    a
+
+  str_b = if b.value
+    b.value()
+  else
+    b
+
+  str_a is str_b
+    
 if !Array.prototype.last
   Array.prototype.last = (n) ->
     n = if typeof n != 'undefined' 
