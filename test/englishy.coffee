@@ -33,26 +33,6 @@ record_err = (f) ->
 must_equal = (actual, expected) ->
   assert.deepEqual actual, expected
 
-describe 'Stringy compare', () ->
-
-  it "returns true if Stringy's value is same as string", () ->
-    str     = "me"
-    stringy = new ep.Stringy str
-    assert.equal ep.stringy_compare(stringy, str), true
-
-  it "returns false if Stringy's value is not same as string", () ->
-    str     = "me"
-    stringy = new ep.Stringy "not me"
-    assert.equal ep.stringy_compare(stringy, str), false
-
-  it 'returns true if both values are the same string', () ->
-    str     = "me"
-    assert.equal ep.stringy_compare(str, str), true
-
-  it 'returns false if values are different strings', () ->
-    assert.equal ep.stringy_compare("me", "not me"), false
-
-
 describe 'Parsing to tokens', () ->
 
   it 'parses multiple sentences', () ->

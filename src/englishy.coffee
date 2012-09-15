@@ -25,9 +25,21 @@ if !Array.prototype.last
     
 exports.Stringy = class Stringy
   
-  constructor: (str, is_quoted) ->
-    @target = str
-    @quoted = not not is_quoted
+  @is_quoted: (str) ->
+    _.first(str) is '"' and _.last(str) is '"'
+
+  constructor: (str) ->
+    if arguments.length isnt 1
+      throw new Error "Only one argument is allowed: #{ (v for v in arguments).join(', ') }"
+    
+    @quoted = false
+    
+    @target = if Stringy.is_quoted(str) 
+      @quoted = true
+      str.substring( 1, str.length - 1 )
+    else
+      str
+
 
   is_stringy: () ->
     true
@@ -164,8 +176,8 @@ exports.Englishy = class Englishy
     
     for val, i in line_arr
       piece = line_arr[i]
-      line_arr[i] = if _.first(piece) is '"' and _.last(piece) is '"'
-        new exports.Stringy piece.substring( 1, piece.length - 1 ), true
+      line_arr[i] = if Stringy.is_quoted(piece) 
+        new exports.Stringy piece
       else
         if var_regexp
           arr = []
