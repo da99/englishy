@@ -31,8 +31,11 @@ exports.Stringy = class Stringy
   @to_strings: (arr) ->
     new_arr = []
     for v in arr
-      new_arr.push if _.isObject(v) and v.value
-        v.value()
+      new_arr.push if _.isObject(v) and v.is_quoted
+        if v.is_quoted()
+          "\"#{v.value()}\""
+        else
+          v.value()
       else
         "#{v}"
     new_arr

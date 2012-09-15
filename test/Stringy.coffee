@@ -38,6 +38,14 @@ describe 'Stringy.to_strings', () ->
     arr = ( (new ep.Stringy v) for v in 'abc'.split('') )
     assert.deepEqual ep.Stringy.to_strings(arr), ['a','b','c']
 
+  it "surrounds originally quoted strings w/ quotation marks.", ()->
+    arr = []
+    arr.push new ep.Stringy "a"
+    arr.push new ep.Stringy '"b"'
+    arr.push new ep.Stringy '"c'
+    assert.deepEqual ep.Stringy.to_strings(arr), ['a', '"b"', '"c']
+
+
   for target in [ true, false, null, undefined ]
     it "turns #{target} to a string", () ->
       arr = ( (new ep.Stringy v) for v in 'abc'.split('') )
