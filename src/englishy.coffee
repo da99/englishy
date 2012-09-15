@@ -28,6 +28,16 @@ exports.Stringy = class Stringy
   @is_quoted: (str) ->
     _.first(str) is '"' and _.last(str) is '"'
 
+  @to_strings: (arr) ->
+    new_arr = []
+    for v in arr
+      new_arr.push if v.value
+        v.value()
+      else
+        v
+    new_arr
+
+
   constructor: (str) ->
     if arguments.length isnt 1
       throw new Error "Only one argument is allowed: #{ (v for v in arguments).join(', ') }"

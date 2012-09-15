@@ -32,4 +32,8 @@ describe 'Stringy compare', () ->
     assert.equal ep.stringy_compare("me", "not me"), false
 
 
+describe 'Stringy.to_strings', () ->
 
+  it "returns an array of Stringys as Strings.", () ->
+    arr = ( (new ep.Stringy v) for v in 'abc'.split('') )
+    assert.deepEqual ep.Stringy.to_strings(arr), ['a','b','c']
