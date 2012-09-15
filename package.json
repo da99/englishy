@@ -1,17 +1,16 @@
 {
   "name": "englishy",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A naive approach to parsing Englishy text.",
   "main": "lib/englishy.js",
   "scripts": {
     "test": "mocha"
   },
   "dependencies": {
-    "string_da99": "0.2.x", 
+    "string_da99": "0.2.x",
     "underscore": "1.x.x"
   },
-  "devDependencies": {
-  },
+  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/da99/englishy"
