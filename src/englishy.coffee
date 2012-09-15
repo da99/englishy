@@ -31,10 +31,10 @@ exports.Stringy = class Stringy
   @to_strings: (arr) ->
     new_arr = []
     for v in arr
-      new_arr.push if v.value
+      new_arr.push if _.isObject(v) and v.value
         v.value()
       else
-        v
+        "#{v}"
     new_arr
 
 

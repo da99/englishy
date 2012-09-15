@@ -37,3 +37,10 @@ describe 'Stringy.to_strings', () ->
   it "returns an array of Stringys as Strings.", () ->
     arr = ( (new ep.Stringy v) for v in 'abc'.split('') )
     assert.deepEqual ep.Stringy.to_strings(arr), ['a','b','c']
+
+  for target in [ true, false, null, undefined ]
+    it "turns #{target} to strings", () ->
+      arr = ( (new ep.Stringy v) for v in 'abc'.split('') )
+      arr.push target
+      assert.deepEqual ep.Stringy.to_strings(arr), ['a','b','c', "#{target}"]
+      
